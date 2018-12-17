@@ -14,16 +14,20 @@ SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 class Ball:
-    def __init__(self,x,y):
+    def __init__(self,x,y,dx,dy):
         self.x = x
         self.y = y
+        self.dx = dx
+        self.dy = dy
         self.size = 30
 
 def make_ball():
     x = random.randrange(30,SCREEN_WIDTH-30)
     y = random.randrange(30,SCREEN_HEIGHT-30)
+    dx = random.randrange(-3,3)
+    dy = random.randrange(-3,3)
 
-    myball = Ball(x,y)
+    myball = Ball(x,y,dx,dy)
     return myball
 
 class MyGame(arcade.Window):
@@ -56,7 +60,7 @@ class MyGame(arcade.Window):
 
         # Call draw() on all your sprite lists below
         for ball in self.ball_list:
-            arcade.draw_circle_filled(ball.x, ball.y, 30, arcade.color.BLACK)
+            arcade.draw_circle_filled(ball.x, ball.y, ball.size, arcade.color.BLACK)
 
     def update(self, delta_time):
         """
@@ -64,7 +68,19 @@ class MyGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
-        pass
+        for ball in self.ball_list:
+            ball.x = ball.x + ball.dx
+            ball.y = ball.y + ball.dy
+            
+            ball.size = ball.size + 1
+
+            if (ball.x >= (SCREEN_WIDTH - ball.size) or ball.x <= ball.size):
+                ball.dx = -ball.dx
+            
+            if (ball.y >= (SCREEN_HEIGHT - ball.size) or ball.y <= ball.size):
+                ball.dy = -ball.dy
+            
+
 
     def on_mouse_press(self, x, y, button, key_modifiers):
         """
