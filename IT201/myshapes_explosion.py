@@ -12,6 +12,7 @@ import random
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
+EXPLOSION_TEXTURE_COUNT = 60
 
 class Ball:
     def __init__(self,x,y,dx,dy):
@@ -33,6 +34,30 @@ def make_ball():
     myball = Ball(x,y,dx,dy)
     return myball
 
+class Explosion(arcade.Sprite):
+    """ This class creates an explosion animation """
+
+    # Static variable that holds all the explosion textures
+    explosion_textures = []
+
+    def __init__(self, texture_list):
+        super().__init__("images/explosion/explosion0000.png")
+
+        # Start at the first frame
+        self.current_texture = 0
+        self.textures = texture_list
+
+    def update(self):
+
+        # Update to the next frame of the animation. If we are at the end
+        # of our frames, then delete this sprite.
+        self.current_texture += 1
+        if self.current_texture < len(self.textures):
+            self.set_texture(self.current_texture)
+        else:
+            self.kill()
+
+
 class MyGame(arcade.Window):
     """
     Main application class.
@@ -48,10 +73,27 @@ class MyGame(arcade.Window):
         arcade.set_background_color(arcade.color.AMBER)
 
         self.ball_list = []
-
+        self.explosions_list = arcade.SpriteList()
+        
         # If you have sprite lists, you should create them here,
         # and set them to None
 
+    def setup(self):
+
+        """ Set up the game and initialize the variables. """
+        
+        self.explosions_list = arcade.SpriteList()
+
+        self.explosion_texture_list = []
+
+        for i in range(EXPLOSION_TEXTURE_COUNT):
+            # Files from http://www.explosiongenerator.com are numbered sequentially.
+            # This code loads all of the explosion0000.png to explosion0270.png files
+            # that are part of this explosion.
+            texture_name = f"images/explosion/explosion{i:04d}.png"
+
+            self.explosion_texture_list.append(arcade.load_texture(texture_name))
+        
     def on_draw(self):
         """
         Render the screen.
@@ -60,6 +102,8 @@ class MyGame(arcade.Window):
         # This command should happen before we start drawing. It will clear
         # the screen to the background color, and erase what we drew last frame.
         arcade.start_render()
+        
+        self.explosions_list.draw()
 
         # Call draw() on all your sprite lists below
         for ball in self.ball_list:
@@ -71,6 +115,9 @@ class MyGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
+        
+        self.explosions_list.update()
+
         for ball in self.ball_list:
             ball.x = ball.x + ball.dx
             ball.y = ball.y + ball.dy
@@ -98,6 +145,11 @@ class MyGame(arcade.Window):
         """
         Called when the user presses a mouse button.
         """
+        explosion = Explosion(self.explosion_texture_list)
+        explosion.center_x = x
+        explosion.center_y = y
+        self.explosions_list.append(explosion)
+        
         myball = make_ball()
         self.ball_list.append(myball)
 
@@ -105,6 +157,7 @@ class MyGame(arcade.Window):
 def main():
     """ Main method """
     game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT)
+    game.setup()
     arcade.run()
 
 
