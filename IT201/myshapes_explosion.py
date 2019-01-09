@@ -155,6 +155,12 @@ class MyGame(arcade.Window):
         Called when the user presses a mouse button.
         """
         # here you should test for whether the click hits a ball
+        # to create an explosion execute this code below
+        # right now an explosion is triggered for every mouse press
+        # to calculate the distance between the mouse click and
+        # the center of the ball use the following equation
+        # distance = math.sqrt((x-ball.x)**2+(y-ball.y)**2)
+        
         explosion = Explosion(self.explosion_texture_list)
         explosion.center_x = x
         explosion.center_y = y
