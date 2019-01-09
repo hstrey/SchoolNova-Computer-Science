@@ -19,10 +19,10 @@ class Ball:
         self.y = y
         self.dx = dx
         self.dy = dy
-        self.size = 30
-        self.maxsize = 40
-        self.minsize = 20
-        self.gettingbigger = True
+        self.maxsize = 30
+        self.minsize = 10
+        self.size = 20
+        self.isitgrowing = True
 
 def make_ball():
     x = random.randrange(30,SCREEN_WIDTH-30)
@@ -71,26 +71,27 @@ class MyGame(arcade.Window):
         Normally, you'll call update() on the sprite lists that
         need it.
         """
+        
         for ball in self.ball_list:
             ball.x = ball.x + ball.dx
             ball.y = ball.y + ball.dy
             
-            if ball.gettingbigger:
-                if ball.size >= ball.maxsize:
-                    ball.gettingbigger = False
-                else:
-                    ball.size = ball.size + 1
-            else:
-                if ball.size<=ball.minsize:
-                    ball.gettingbigger = True
-                else:
-                    ball.size = ball.size -1
-
             if (ball.x >= (SCREEN_WIDTH - ball.size) or ball.x <= ball.size):
                 ball.dx = -ball.dx
             
             if (ball.y >= (SCREEN_HEIGHT - ball.size) or ball.y <= ball.size):
                 ball.dy = -ball.dy
+                
+            if ball.isitgrowing:
+                if ball.size < ball.maxsize:
+                    ball.size = ball.size +1
+                else:
+                    ball.isitgrowing = False
+            else:
+                if ball.size > ball.minsize:
+                    ball.size = ball.size -1
+                else:
+                    ball.isitgrowing = True
             
 
 

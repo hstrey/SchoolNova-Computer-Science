@@ -9,6 +9,7 @@ python -m arcade.examples.starting_template
 """
 import arcade
 import random
+import math
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -72,8 +73,9 @@ class MyGame(arcade.Window):
 
         arcade.set_background_color(arcade.color.AMBER)
 
+        
+        self.explosions_list = None
         self.ball_list = []
-        self.explosions_list = arcade.SpriteList()
         
         # If you have sprite lists, you should create them here,
         # and set them to None
@@ -93,6 +95,11 @@ class MyGame(arcade.Window):
             texture_name = f"images/explosion/explosion{i:04d}.png"
 
             self.explosion_texture_list.append(arcade.load_texture(texture_name))
+            
+        # create 10 balls
+        for i in range(10):
+            myball = make_ball()
+            self.ball_list.append(myball)
         
     def on_draw(self):
         """
@@ -106,6 +113,7 @@ class MyGame(arcade.Window):
         self.explosions_list.draw()
 
         # Call draw() on all your sprite lists below
+        print(len(self.ball_list))
         for ball in self.ball_list:
             arcade.draw_circle_filled(ball.x, ball.y, ball.size, arcade.color.BLACK)
 
@@ -118,6 +126,7 @@ class MyGame(arcade.Window):
         
         self.explosions_list.update()
 
+        print(len(self.ball_list))
         for ball in self.ball_list:
             ball.x = ball.x + ball.dx
             ball.y = ball.y + ball.dy
@@ -145,15 +154,12 @@ class MyGame(arcade.Window):
         """
         Called when the user presses a mouse button.
         """
+        # here you should test for whether the click hits a ball
         explosion = Explosion(self.explosion_texture_list)
         explosion.center_x = x
         explosion.center_y = y
         self.explosions_list.append(explosion)
         
-        myball = make_ball()
-        self.ball_list.append(myball)
-
-
 def main():
     """ Main method """
     game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT)
